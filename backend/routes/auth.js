@@ -5,6 +5,7 @@ const { body, validationResult } = require("express-validator");
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const JWST = require('jsonwebtoken');
+const JWT_SECRET_ = "This is Token key for NoteBookApp created by Anurup";
 
 // Creating a new User by "/api/auth/createUser" POST request
 router.post(
@@ -41,7 +42,16 @@ router.post(
         email: req.body.email,
         password: secPassword
       });
-      res.send(user);
+
+      // Generating User Token
+      const data = {
+        user : {
+          id: user.id 
+        },
+      }
+      const authToken = JWST.sign(data, JWT_SECRET_);
+      res.json({authToken})
+
     } catch (error) {
         console.log(error.message);
         res.status(500).json({error: "Some Error occured"})
