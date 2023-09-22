@@ -18,23 +18,23 @@ router.post(
   ],
   async (req, res) => {
     // Checking for any errors w.r.t specified validations
-    let erros = await validationResult(req);
+    let errors = await validationResult(req);
 
     // if errors are found bad request with error message is sent
-    if (!erros) {
-      res.status(400).json({ erros: erros.message });
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array()});
     }
 
     try {
       // Trying to check if specified notes is already present in database
-      let notes = await Notes.find({
-        title: req.body.title,
-        description: req.body.description,
-        tag: req.body.tag,
-      });
-      if (notes) {
-        return res.status(400).json({ error: "This file already exists" });
-      }
+      //   let notes = await Notes.find({
+      //     title: req.body.title,
+      //     description: req.body.description,
+      //     tag: req.body.tag,
+      //   });
+      //   if (notes) {
+      //     return res.status(400).json({ error: "This file already exists" });
+      //   }
 
       // Pushing Notes data to database
       notes = await Notes.create({
