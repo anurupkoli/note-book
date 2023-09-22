@@ -60,4 +60,50 @@ router.post(
   }
 );
 
+// Authenticating User who is trying to login by Post req "/api/auth/login"
+router.post('/login', [
+  body('email', 'Enter a valid email').isEmail(),
+  body('password', 'Enter a valid password').exists()
+], async (req,res)=>{
+  // If credentials are not correct
+  const errors = await validationResult(req);
+  if(!errors.isEmpty()){
+    return res.status(400).json({errors: errors.array()})
+  }
+
+  try {
+   const {email,password} = req.body;
+
+  // Fetching details of User using email
+  const user = await User.findOne({email})
+
+  // returning error with message if user doesn't exist
+  if(!user){
+    return res.status(400).json({error: "Enter valid credentials"});
+  }
+
+  // Comparing Passwords 
+  const passwordConfirm = await bcrypt.compare(password, user.password)
+
+  // Returning error with message if Password was wrong
+  if(!passwordConfirm){ 
+    return res.status(400).json({error: "Enter valid credentials"})
+  }
+
+  // Sending Token if all credentials are correct
+  const data = {
+    user:{
+      id: user.id
+    }
+  }
+  const authToken = JWST.sign(data, JWT_SECRET_);
+  res.status(200).json({authToken}) 
+
+ } catch (error) {
+   console.log(error.message);
+  res.status(500).json({error: "Some internal error occured"})
+ }
+
+})
+
 module.exports = router;
