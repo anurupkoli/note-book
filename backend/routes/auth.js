@@ -3,6 +3,8 @@ const User = require("../modles/User");
 const express = require("express");
 const { body, validationResult } = require("express-validator");
 const router = express.Router();
+const bcrypt = require('bcryptjs');
+const JWST = require('jsonwebtoken');
 
 // Creating a new User by "/api/auth/createUser" POST request
 router.post(
@@ -28,17 +30,23 @@ router.post(
           .status(400)
           .json({ error: "User with this email already exists" });
       }
+
+      // Creating Hashed Password with salt
+      const salt = await bcrypt.genSalt(10);
+      const secPassword = await bcrypt.hash(req.body.password, salt);
+
+      // Creating new User
       user = await User.create({
         name: req.body.name,
         email: req.body.email,
-        password: req.body.password,
+        password: secPassword
       });
+      res.send(user);
     } catch (error) {
         console.log(error.message);
         res.status(500).json({error: "Some Error occured"})
     }
 
-    res.send(user);
   }
 );
 
