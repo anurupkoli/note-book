@@ -1,6 +1,6 @@
 const fetchUser = require('../middleware/fetchUser');
 const { Schema } = require("mongoose");
-const User = require("../modles/User");
+const User = require("../models/User");
 const express = require("express");
 const { body, validationResult } = require("express-validator");
 const router = express.Router();
