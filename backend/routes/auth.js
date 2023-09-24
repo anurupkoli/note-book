@@ -1,3 +1,4 @@
+const fetchUser = require('../middleware/fetchUser');
 const { Schema } = require("mongoose");
 const User = require("../modles/User");
 const express = require("express");
@@ -106,4 +107,23 @@ router.post('/login', [
 
 })
 
+
+// Fetching User data with POST request "/api/auth/getData"
+router.post('/getData',fetchUser, async (req,res)=>{
+  // fetchUser is middleware imported from middleware folder
+  const userId = req.user.id;
+  try {
+    // Fetching all details except password using user Id
+    const data = await User.findById(userId).select("-password")
+    res.status(200).json({data});
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({error: "Some internal error occured"})
+  }
+})
+
 module.exports = router;
+
+
+
+
