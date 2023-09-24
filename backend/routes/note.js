@@ -16,19 +16,18 @@ router.post(
   async (req, res) => {
     const error = validationResult(req);
     if (!error.isEmpty()) {
-      return res.status(400).json({ error: "Enter valid Note" });
+      return res.status(400).json({ error: error.array()});
     }
 
     try {
       const { title, description, tag } = req.body;
-      const note = Note.create({
+      const note = await Note.create({
         title: title,
         description: description,
         tag: tag,
         user: req.user.id,
       });
-      const savedNote = await note.save();
-      res.status(200).json(note);
+      res.status(200).json(note)
     } catch (error) {
       console.log(error);
       res.status(500).send("Internal server error");
