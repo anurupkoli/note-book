@@ -58,8 +58,11 @@ router.get("/getNotes", fetchUser, async (req, res) => {
 router.put("/updateNote/:id", fetchUser, async (req, res) => {
   try {
     let note = await Note.findById(req.params.id);
+    if(!note){
+      return res.status(404).send("No note found")
+    }
     if (note.user.toString() !== req.user.id) {
-      return res.send(404).send("Authentication revoked");
+      return res.status(404).send("Authentication revoked");
     }
 
     let { title, description, tag } = req.body;
@@ -84,5 +87,25 @@ router.put("/updateNote/:id", fetchUser, async (req, res) => {
     res.status(500).json(error);
   }
 });
+
+
+// Deleting note with DELETE request by "/api/note/deleteNote/:id": Login required
+router.delete("/deleteNote/:id", fetchUser, async (req, res)=>{
+  try {
+    let note = await Note.findById(req.params.id)
+  if(!note){
+    return res.status(404).send("No note found")
+  }
+  if(note.user.toString()!==req.user.id){
+    return res.status(500).send("Authentication Revoked")
+  }
+  const deletedNote = await Note.findByIdAndDelete(req.params.id)
+  res.status(200).json({Success: "Note deleted", note: deletedNote}) 
+
+  } catch (error) {
+    console.log(error)    
+    res.status(500).json(error)
+  }
+})
 
 module.exports = router;
