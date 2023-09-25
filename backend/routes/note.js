@@ -40,7 +40,7 @@ router.post(
 // Fetching Notes with GET request "/api/note/getNote": Login is required
 router.get("/getNote", fetchUser, async (req, res) => {
   // Trying to validate user with user token
-  let userId = await Note.findOne({ user: req.user.id });\
+  let userId = await Note.findOne({ user: req.user.id });
   // Returning status code 400 with error message if user was not validated
   if (!userId) {
     return res.status(400).json({ error: "Authentication Revoked" });
