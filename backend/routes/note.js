@@ -40,12 +40,12 @@ router.post(
 // Fetching Notes with GET request "/api/note/getNotes": Login is required
 router.get("/getNotes", fetchUser, async (req, res) => {
   // checking if user has created any note
-  let userId = await Note.findOne({ user: req.user.id });
-  if (!userId) {
-    return res.status(400).json({ error: "No note found" });
-  }
-  // Fetching user notes if user was validated
   try {
+    let userId = await Note.findOne({ user: req.user.id });
+    if (!userId) {
+      return res.status(400).json({ error: "No note found" });
+    }
+    // Fetching user notes if user was validated
     let note = await Note.find({ user: req.user.id });
     return res.status(200).json(note);
   } catch (error) {
@@ -58,8 +58,8 @@ router.get("/getNotes", fetchUser, async (req, res) => {
 router.put("/updateNote/:id", fetchUser, async (req, res) => {
   try {
     let note = await Note.findById(req.params.id);
-    if(!note){
-      return res.status(404).send("No note found")
+    if (!note) {
+      return res.status(404).send("No note found");
     }
     if (note.user.toString() !== req.user.id) {
       return res.status(404).send("Authentication revoked");
@@ -88,24 +88,22 @@ router.put("/updateNote/:id", fetchUser, async (req, res) => {
   }
 });
 
-
 // Deleting note with DELETE request by "/api/note/deleteNote/:id": Login required
-router.delete("/deleteNote/:id", fetchUser, async (req, res)=>{
+router.delete("/deleteNote/:id", fetchUser, async (req, res) => {
   try {
-    let note = await Note.findById(req.params.id)
-  if(!note){
-    return res.status(404).send("No note found")
-  }
-  if(note.user.toString()!==req.user.id){
-    return res.status(500).send("Authentication Revoked")
-  }
-  const deletedNote = await Note.findByIdAndDelete(req.params.id)
-  res.status(200).json({Success: "Note deleted", note: deletedNote}) 
-
+    let note = await Note.findById(req.params.id);
+    if (!note) {
+      return res.status(404).send("No note found");
+    }
+    if (note.user.toString() !== req.user.id) {
+      return res.status(500).send("Authentication Revoked");
+    }
+    const deletedNote = await Note.findByIdAndDelete(req.params.id);
+    res.status(200).json({ Success: "Note deleted", note: deletedNote });
   } catch (error) {
-    console.log(error)    
-    res.status(500).json(error)
+    console.log(error);
+    res.status(500).json(error);
   }
-})
+});
 
 module.exports = router;
