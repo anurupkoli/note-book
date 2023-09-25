@@ -37,21 +37,51 @@ router.post(
   }
 );
 
-// Fetching Notes with GET request "/api/note/getNote": Login is required
-router.get("/getNote", fetchUser, async (req, res) => {
-  // Trying to validate user with user token
+// Fetching Notes with GET request "/api/note/getNotes": Login is required
+router.get("/getNotes", fetchUser, async (req, res) => {
+  // checking if user has created any note
   let userId = await Note.findOne({ user: req.user.id });
-  // Returning status code 400 with error message if user was not validated
   if (!userId) {
-    return res.status(400).json({ error: "Authentication Revoked" });
+    return res.status(400).json({ error: "No note found" });
   }
   // Fetching user notes if user was validated
   try {
-    const note = await Note.find({ user: req.user.id });
+    let note = await Note.find({ user: req.user.id });
     return res.status(200).json(note);
   } catch (error) {
     console.log(error);
     return res.status(500).json(error);
+  }
+});
+
+// Updating note with PUT request "/api/note/updateNote/:id": Requires login
+router.put("/updateNote/:id", fetchUser, async (req, res) => {
+  try {
+    let note = await Note.findById(req.params.id);
+    if (note.user.toString() !== req.user.id) {
+      return res.send(404).send("Authentication revoked");
+    }
+
+    let { title, description, tag } = req.body;
+    let updateNote = {};
+    if (title) {
+      updateNote.title = title;
+    }
+    if (description) {
+      updateNote.description = description;
+    }
+    if (tag) {
+      updateNote.tag = tag;
+    }
+    const updatedNote = await Note.findByIdAndUpdate(
+      req.params.id,
+      { $set: updateNote },
+      { new: true }
+    );
+    res.status(200).json(updatedNote);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
   }
 });
 
