@@ -1,47 +1,66 @@
-import React from "react";
+import React, {useState, useContext} from "react";
 import Notes from "./Notes";
+import noteContext from "../Context/notes/noteContext";
 
 export default function Home() {
+
+  let context = useContext(noteContext)
+  let {addNote} = context;
+  const [note, setNote] = useState({title: "", description:"", tag: "General"});
+
+  const handleClick = (e)=>{
+    e.preventDefault();
+
+    addNote(note.title, note.description, note.tag);
+  }
+
+  const handleChange = (e)=>{
+    setNote({...note, [e.target.name]: e.target.value })
+  }
+
   return (
     <>
       <div className="container ">
         <h1 className="mt-5">SAVE A NOTE</h1>
         <form className="my-3 ">
-          <div class="mb-3">
-            <label for="exampleInputEmail1" class="form-label">
-              Email address
+          <div className="mb-3">
+            <label htmlFor="title" className="form-label">
+              Title
             </label>
             <input
-              type="email"
-              class="form-control"
-              id="exampleInputEmail1"
+              type="text"
+              className="form-control"
+              id="title"
+              name="title"
               aria-describedby="emailHelp"
+              onChange={handleChange}
             />
-            <div id="emailHelp" class="form-text">
-              We'll never share your email with anyone else.
-            </div>
           </div>
-          <div class="mb-3">
-            <label for="exampleInputPassword1" class="form-label">
-              Password
+          <div className="mb-3">
+            <label htmlFor="description" className="form-label">
+              Description
             </label>
             <input
-              type="password"
-              class="form-control"
-              id="exampleInputPassword1"
+              type="text"
+              className="form-control"
+              id="description"
+              name="description"
+              onChange={handleChange}
             />
           </div>
-          <div class="mb-3 form-check">
-            <input
-              type="checkbox"
-              class="form-check-input"
-              id="exampleCheck1"
-            />
-            <label class="form-check-label" for="exampleCheck1">
-              Check me out
+          <div className="mb-3">
+            <label htmlFor="tag" className="form-label">
+              Tag
             </label>
+            <input
+              type="text"
+              className="form-control"
+              id="tag"
+              name="tag"
+              onChange={handleChange}
+            />
           </div>
-          <button type="submit" class="btn btn-primary">
+          <button type="submit" className="btn btn-primary" onClick={handleClick} >
             Submit
           </button>
         </form>
