@@ -10,7 +10,6 @@ export default function Home() {
 
   const handleClick = (e)=>{
     e.preventDefault();
-
     addNote(note.title, note.description, note.tag);
   }
 
@@ -37,18 +36,6 @@ export default function Home() {
             />
           </div>
           <div className="mb-3">
-            <label htmlFor="description" className="form-label">
-              Description
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              id="description"
-              name="description"
-              onChange={handleChange}
-            />
-          </div>
-          <div className="mb-3">
             <label htmlFor="tag" className="form-label">
               Tag
             </label>
@@ -57,6 +44,20 @@ export default function Home() {
               className="form-control"
               id="tag"
               name="tag"
+              onChange={handleChange}
+            />
+          </div>
+          <div className="mb-3">
+            <label htmlFor="description" className="form-label">
+              Description
+            </label>
+            <textarea
+              type="text"
+              className="form-control"
+              id="description"
+              name="description"
+              cols={30}
+              rows={10}
               onChange={handleChange}
             />
           </div>
