@@ -2,69 +2,67 @@ import NoteContext from "./noteContext";
 import { useState } from "react";
 
 const NoteState = (props)=>{
-    const iNotes = [
-        {
-          "_id": "651042943178713sdfga64232688588a",
-          "user": "650dd733cfa4393ff3642970",
-          "title": "Personal",
-          "description": "To wake Up early",
-          "tag": "Nothing",
-          "date": "2023-09-24T14:07:16.828Z",
-          "__v": 0
-        },
-        {
-          "_id": "65110a6d0ee97889aegaacd8cfd8a6b576",
-          "user": "650dd733cfa4393ff3642970",
-          "title": "Personal",
-          "description": "To wake Up early",
-          "tag": "Nothing",
-          "date": "2023-09-25T04:19:57.714Z",
-          "__v": 0
-        },
-        {
-          "_id": "65110a6d563540eeksftg9ser8cfd8a6b576",
-          "user": "650dd733cfa4393ff3642970",
-          "title": "Personal",
-          "description": "To wake Up early",
-          "tag": "Nothing",
-          "date": "2023-09-25T04:19:57.714Z",
-          "__v": 0
-        },
-        {
-          "_id": "65110a6d0ee9dasdfqq28cfd8a6b576",
-          "user": "650dd733cfa4393ff3642970",
-          "title": "Personal",
-          "description": "To wake Up early",
-          "tag": "Nothing",
-          "date": "2023-09-25T04:19:57.714Z",
-          "__v": 0
-        },
-      ]
+    const host = 'http://localhost:8000'
+    const iNotes = []
+    const [notes, setNotes] = useState(iNotes);
 
-      const [notes, setNotes] = useState(iNotes);
+    const fetchNotes = async ()=>{
+      const response = await fetch(`${host}/api/note/getNotes`, {
+        method: "GET", 
+        headers: {
+          "Content-type": "application/json",
+          "user-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjUwZGQ3MzNjZmE0MzkzZmYzNjQyOTcwIn0sImlhdCI6MTY5NTU1ODg2N30.-2k-EK529ygnaqA_NxU0Y_gx9ZU-sS0N4BdWuZeFx3o"
+        },
+        
+      }) 
+      response.json().then(data =>{setNotes(data)})
+    }
 
-    const addNote = (title, description, tag)=>{
-        let note = {
-            "title": title,
-            "description": description,
-            "tag": tag,
-            "_id": "132785-091823541",
-            "date": "2023-09-25T04:19:57.714Z",
-            "__v": 0
+
+    const addNote = async (title, description, tag)=>{
+        const response = await fetch(`${host}/api/note/addNote`, {
+          method: "POST", 
+          headers: {
+            "Content-type": "application/json",
+            "user-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjUwZGQ3MzNjZmE0MzkzZmYzNjQyOTcwIn0sImlhdCI6MTY5NTU1ODg2N30.-2k-EK529ygnaqA_NxU0Y_gx9ZU-sS0N4BdWuZeFx3o"
+          },
+          body: JSON.stringify({
+            title: title,
+            description: description,
+            tag: tag
+          })
+        })
+        fetchNotes();
+        response.json().then(data=>{console.log(data)}) 
+    }
+
+    const deleteNote = async (id)=>{
+
+      const response = await fetch(`${host}/api/note/deleteNote/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-type": "application/json",
+          "user-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjUwZGQ3MzNjZmE0MzkzZmYzNjQyOTcwIn0sImlhdCI6MTY5NTU1ODg2N30.-2k-EK529ygnaqA_NxU0Y_gx9ZU-sS0N4BdWuZeFx3o"
         }
-        setNotes(notes.concat(note))
+      })
+      let json = response.json().then((data)=>{return data})
+      console.log(json)
+      fetchNotes();
     }
 
-    const deleteNote = ()=>{
-
-    }
-
-    const editNote = ()=>{
-
+    const editNote = (id, title, description, tag)=>{
+      for (let i = 0; i < notes.length; i++) {
+        const ele = notes[i];
+        if(ele._id === id){
+          ele.title = title;
+          ele.description = description;
+          ele.tag = tag
+        }
+      }
     }
 
     return(
-        <NoteContext.Provider value={{notes, addNote, deleteNote, editNote}} >
+        <NoteContext.Provider value={{notes, addNote, deleteNote, editNote, fetchNotes}} >
             {props.children}
         </NoteContext.Provider>
     )

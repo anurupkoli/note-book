@@ -1,10 +1,14 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import noteContext from "../Context/notes/noteContext";
 import NoteItem from "./NoteItem";
 
 export default function Notes() {
   const context = useContext(noteContext);
-  let { notes } = context;
+  let { notes, fetchNotes } = context;
+  useEffect(() => {
+    fetchNotes()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <div className="row my-2">
       {notes.map((note) => {

@@ -47,7 +47,7 @@ router.get("/getNotes", fetchUser, async (req, res) => {
     }
     // Fetching user notes if user was validated
     let note = await Note.find({ user: req.user.id });
-    return res.status(200).json(note);
+    return res.json(note);
   } catch (error) {
     console.log(error);
     return res.status(500).json(error);
