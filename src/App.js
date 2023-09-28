@@ -18,7 +18,7 @@ function App() {
       message: message
     })
     setTimeout(() => {
-      setAlert(false)
+      setAlert(null)
     }, 2000);
   }
 

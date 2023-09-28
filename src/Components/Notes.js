@@ -5,6 +5,7 @@ import NoteItem from "./NoteItem";
 export default function Notes(props) {
   const context = useContext(noteContext);
   let { notes, fetchNotes, editNote, success } = context;
+  console.log(notes)
   const [note, setNote] = useState({
     etitle: "",
     edescription: "",
@@ -31,9 +32,9 @@ export default function Notes(props) {
     });
   };
 
-  const noteEdit = () => {
+  const noteEdit = async () => {
     refClose.current.click();
-    editNote(note.eid, note.etitle, note.edescription, note.etag);
+    await editNote(note.eid, note.etitle, note.edescription, note.etag);
     if(success){
       props.fireAlert('success', 'Note has been edited :)')
     }
@@ -142,11 +143,11 @@ export default function Notes(props) {
           </div>
         </div>
       </div>
-      <div className="row my-2">
+      {notes?(<div className="row my-2">
         {notes.map((note) => {
           return <NoteItem key={note._id} fireModal={fireModal} note={note} fireAlert={props.fireAlert} />;
         })}
-      </div>
+      </div>):'No Notes found'}
     </>
   );
 }

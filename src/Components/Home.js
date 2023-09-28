@@ -7,10 +7,9 @@ export default function Home(props) {
   let {addNote, success} = context;
   const [note, setNote] = useState({title: "", description:"", tag: "General"});
 
-  const handleClick = (e)=>{
+  const handleClick = async (e)=>{
     e.preventDefault();
-    addNote(note.title, note.description, note.tag);
-    console.log(success)
+    await addNote(note.title, note.description, note.tag);
     if(success===true){
       props.fireAlert('success', 'Note has been saved :)')
     }

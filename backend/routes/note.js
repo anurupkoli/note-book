@@ -46,14 +46,14 @@ router.get("/getNotes", fetchUser, async (req, res) => {
   // checking if user has created any note
   let success = false;
   try {
-    let userId = await Note.findOne({ user: req.user.id });
-    if (!userId) {
+    let note = await Note.findOne({ user: req.user.id });
+    if (!note) {
       success = false;
-      return res.status(400).json({success, error: "No note found" });
+      return res.json({success,note, error: "No note found" });
     }
     // Fetching user notes if user was validated
     success = true;
-    let note = await Note.find({ user: req.user.id });
+    note = await Note.find({ user: req.user.id });
     return res.json({success,note});
   } catch (error) {
     success = false;

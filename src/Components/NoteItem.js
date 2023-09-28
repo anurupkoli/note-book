@@ -7,7 +7,7 @@ export default function NoteItem(props) {
   let {deleteNote, success} = context;
   const { note, fireModal, fireAlert} = props;
   const alert = ()=>{
-    if(success){
+    if(success === true){
       fireAlert('success', 'Note has been deleted :)')
     }
     else{

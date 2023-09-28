@@ -22,6 +22,7 @@ export default function Login() {
         console.log(json)
         if(json.success){
             localStorage.setItem('token', json.authToken)
+            console.log(localStorage.getItem('token'))
             history('/')
         }
         else{
