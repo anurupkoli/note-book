@@ -2,15 +2,21 @@ import React, {useState, useContext} from "react";
 import Notes from "./Notes";
 import noteContext from "../Context/notes/noteContext";
 
-export default function Home() {
-
+export default function Home(props) {
   let context = useContext(noteContext)
-  let {addNote} = context;
+  let {addNote, success} = context;
   const [note, setNote] = useState({title: "", description:"", tag: "General"});
 
   const handleClick = (e)=>{
     e.preventDefault();
     addNote(note.title, note.description, note.tag);
+    console.log(success)
+    if(success===true){
+      props.fireAlert('success', 'Note has been saved :)')
+    }
+    else{
+      props.fireAlert('danger', 'We could not save your note :(')
+    }
   }
 
   const handleChange = (e)=>{
@@ -19,7 +25,7 @@ export default function Home() {
 
   return (
     <>
-      <div className="container ">
+      <div className="container my-5">
         <h1 className="mt-5">SAVE A NOTE</h1>
         <form className="my-3 ">
           <div className="mb-3">
@@ -68,7 +74,7 @@ export default function Home() {
       </div>
       <div className="container mt-5 ">
         <h2>Your Notes</h2>
-        <Notes/>
+        <Notes fireAlert={props.fireAlert} />
       </div>
     </>
   );

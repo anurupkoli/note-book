@@ -18,10 +18,11 @@ router.post(
   ],
   async (req, res) => {
     const errors = await validationResult(req);
+    let success = false;
 
     // If we found any errors, we return Bad Request with errors
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({success, errors: errors.array() });
     }
 
     // If we found no errors then we check whether user with this email already exists in database
@@ -30,7 +31,7 @@ router.post(
       if (user) {
         return res
           .status(400)
-          .json({ error: "User with this email already exists" });
+          .json({success, error: "User with this email already exists" });
       }
 
       // Creating Hashed Password with salt
@@ -51,11 +52,13 @@ router.post(
         },
       }
       const authToken = JWST.sign(data, JWT_SECRET_);
-      res.json({authToken})
+      success = true
+      res.json({success, authToken})
 
     } catch (error) {
+        let success = false
         console.log(error.message);
-        res.status(500).json({error: "Some Error occured"})
+        res.status(500).json({success, error: "Some Error occured"})
     }
 
   }
@@ -67,9 +70,10 @@ router.post('/login', [
   body('password', 'Enter a valid password').exists()
 ], async (req,res)=>{
   // If credentials are not correct
+  let success = false;
   const errors = await validationResult(req);
   if(!errors.isEmpty()){
-    return res.status(400).json({errors: errors.array()})
+    return res.status(400).json({success,errors: errors.array()})
   }
 
   try {
@@ -80,7 +84,7 @@ router.post('/login', [
 
   // returning error with message if user doesn't exist
   if(!user){
-    return res.status(400).json({error: "Enter valid credentials"});
+    return res.status(400).json({success,error: "Enter valid credentials"});
   }
 
   // Comparing Passwords 
@@ -88,7 +92,7 @@ router.post('/login', [
 
   // Returning error with message if Password was wrong
   if(!passwordConfirm){ 
-    return res.status(400).json({error: "Enter valid credentials"})
+    return res.status(400).json({success,error: "Enter valid credentials"})
   }
 
   // Sending Token if all credentials are correct
@@ -98,12 +102,13 @@ router.post('/login', [
     }
   }
   const authToken = JWST.sign(data, JWT_SECRET_);
-  res.status(200).json({authToken
-  }) 
+  success = true;
+  res.status(200).json({success,authToken}) 
 
  } catch (error) {
+  let success = false;
    console.log(error.message);
-  res.status(500).json({error: "Some internal error occured"})
+  res.status(500).json({success, error: "Some internal error occured"})
  }
 
 })
@@ -112,14 +117,16 @@ router.post('/login', [
 // Fetching User data with POST request "/api/auth/getData"
 router.post('/getData',fetchUser, async (req,res)=>{
   // fetchUser is middleware imported from middleware folder
+  let success = true;
   const userId = req.user.id;
   try {
     // Fetching all details except password using user Id
     const data = await User.findById(userId).select("-password")
-    res.status(200).json({data});
+    res.status(200).json({success,data});
   } catch (error) {
+    success = false
     console.log(error)
-    res.status(500).json({error: "Some internal error occured"})
+    res.status(500).json({success,error: "Some internal error occured"})
   }
 })
 

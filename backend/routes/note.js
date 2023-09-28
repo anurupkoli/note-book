@@ -15,13 +15,15 @@ router.post(
   fetchUser,
   async (req, res) => {
     // Validating notes w.r.t to specified validations
+    let success = false;
     const error = validationResult(req);
     // If errors found, returning with status code 400 and error message
     if (!error.isEmpty()) {
-      return res.status(400).json({ error: error.array() });
+      return res.status(400).json({success, error: error.array() });
     }
     // If validated, pushing data to database
     try {
+      let success = true
       const { title, description, tag } = req.body;
       const note = await Note.create({
         title: title,
@@ -29,7 +31,7 @@ router.post(
         tag: tag,
         user: req.user.id,
       });
-      res.status(200).json({ note });
+      res.status(200).json({success, note });
     } catch (error) {
       console.log(error);
       res.status(500).send("Internal server error");
@@ -40,29 +42,32 @@ router.post(
 // Fetching Notes with GET request "/api/note/getNotes": Login is required
 router.get("/getNotes", fetchUser, async (req, res) => {
   // checking if user has created any note
+  let success = false;
   try {
     let userId = await Note.findOne({ user: req.user.id });
     if (!userId) {
-      return res.status(400).json({ error: "No note found" });
+      return res.status(400).json({success, error: "No note found" });
     }
     // Fetching user notes if user was validated
+    success = true;
     let note = await Note.find({ user: req.user.id });
-    return res.json(note);
+    return res.json({success,note});
   } catch (error) {
     console.log(error);
-    return res.status(500).json(error);
+    return res.status(500).json({success,error});
   }
 });
 
 // Updating note with PUT request "/api/note/updateNote/:id": Requires login
 router.put("/updateNote/:id", fetchUser, async (req, res) => {
+  let success = false;''
   try {
     let note = await Note.findById(req.params.id);
     if (!note) {
       return res.status(404).send("No note found");
     }
     if (note.user.toString() !== req.user.id) {
-      return res.status(404).send("Authentication revoked");
+      return res.status(404).json({success, message: "Authentication revoked"});
     }
 
     let { title, description, tag } = req.body;
@@ -81,7 +86,8 @@ router.put("/updateNote/:id", fetchUser, async (req, res) => {
       { $set: updateNote },
       { new: true }
     );
-    res.status(200).json(updatedNote);
+    success = true;
+    res.status(200).json({success, updatedNote});
   } catch (error) {
     console.log(error);
     res.status(500).json(error);
@@ -90,19 +96,21 @@ router.put("/updateNote/:id", fetchUser, async (req, res) => {
 
 // Deleting note with DELETE request by "/api/note/deleteNote/:id": Login required
 router.delete("/deleteNote/:id", fetchUser, async (req, res) => {
+  let success = false;
   try {
     let note = await Note.findById(req.params.id);
     if (!note) {
-      return res.status(404).send("No note found");
+      return res.status(404).json({success, message:"No note found"});
     }
     if (note.user.toString() !== req.user.id) {
-      return res.status(500).send("Authentication Revoked");
+      return res.status(500).json({success, message: "Authentication Revoked"});
     }
+    success = true
     const deletedNote = await Note.findByIdAndDelete(req.params.id);
-    res.status(200).json({ Success: "Note deleted", note: deletedNote });
+    res.status(200).json({ success, deletedNote });
   } catch (error) {
     console.log(error);
-    res.status(500).json(error);
+    res.status(500).json({success, error});
   }
 });
 

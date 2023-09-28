@@ -5,6 +5,7 @@ const NoteState = (props)=>{
     const host = 'http://localhost:8000'
     const iNotes = []
     const [notes, setNotes] = useState(iNotes);
+    const [success, setsuccess] = useState(false);
 
     const fetchNotes = async ()=>{
       const response = await fetch(`${host}/api/note/getNotes`, {
@@ -15,7 +16,7 @@ const NoteState = (props)=>{
         }, 
       }) 
       const json = await response.json();
-      setNotes(json);
+      setNotes(json.note);
     }
 
 
@@ -32,8 +33,9 @@ const NoteState = (props)=>{
             tag: tag
           })
         })
-        fetchNotes();
         const json = await response.json();
+        setsuccess(json.success)
+        fetchNotes();
     }
 
 
@@ -46,6 +48,7 @@ const NoteState = (props)=>{
         }
       })
       let json = await response.json();
+      setsuccess(json.success)
       fetchNotes();
     }
 
@@ -65,21 +68,12 @@ const NoteState = (props)=>{
       })
       
       let json = await response.json();
-      // console.log(json)
+      setsuccess(json.success)
       fetchNotes();
-
-      // for (let i = 0; i < notes.length; i++) {
-      //   const ele = notes[i];
-      //   if(ele._id === id){
-      //     ele.title = title;
-      //     ele.description = description;
-      //     ele.tag = tag
-      //   }
-      // }
     }
 
     return(
-        <NoteContext.Provider value={{notes, addNote, deleteNote, editNote, fetchNotes}} >
+        <NoteContext.Provider value={{notes, addNote, deleteNote, editNote, fetchNotes, success}} >
             {props.children}
         </NoteContext.Provider>
     )

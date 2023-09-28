@@ -2,14 +2,14 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import noteContext from "../Context/notes/noteContext";
 import NoteItem from "./NoteItem";
 
-export default function Notes() {
+export default function Notes(props) {
   const context = useContext(noteContext);
-  let { notes, fetchNotes, editNote } = context;
+  let { notes, fetchNotes, editNote, success } = context;
   const [note, setNote] = useState({
     etitle: "",
     edescription: "",
     etag: "",
-    eid: ""
+    eid: "",
   });
 
   const handleChange = (e) => {
@@ -23,13 +23,24 @@ export default function Notes() {
 
   const fireModal = (note) => {
     ref.current.click();
-    setNote({etitle: note.title, edescription: note.description, etag: note.tag, eid: note._id});
+    setNote({
+      etitle: note.title,
+      edescription: note.description,
+      etag: note.tag,
+      eid: note._id,
+    });
   };
 
-  const noteEdit = ()=>{
+  const noteEdit = () => {
     refClose.current.click();
-    editNote(note.eid, note.etitle, note.edescription, note.etag)
-  }
+    editNote(note.eid, note.etitle, note.edescription, note.etag);
+    if(success){
+      props.fireAlert('success', 'Note has been edited :)')
+    }
+    else{
+      props.fireAlert('danger', 'We could not edit your note:(')
+    }
+  };
 
   const ref = useRef(null);
   const refClose = useRef(null);
@@ -120,7 +131,11 @@ export default function Notes() {
               >
                 Close
               </button>
-              <button type="button" className="btn btn-primary" onClick={noteEdit} >
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={noteEdit}
+              >
                 Save changes
               </button>
             </div>
@@ -129,7 +144,7 @@ export default function Notes() {
       </div>
       <div className="row my-2">
         {notes.map((note) => {
-          return <NoteItem key={note._id} fireModal={fireModal} note={note} />;
+          return <NoteItem key={note._id} fireModal={fireModal} note={note} fireAlert={props.fireAlert} />;
         })}
       </div>
     </>
