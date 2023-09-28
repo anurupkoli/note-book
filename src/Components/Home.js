@@ -25,8 +25,8 @@ export default function Home(props) {
 
   return (
     <>
-      <div className="container my-5">
-        <h1 className="mt-5">SAVE A NOTE</h1>
+      <div className="container ">
+        <h1 className="mt-1">SAVE A NOTE</h1>
         <form className="my-3 ">
           <div className="mb-3">
             <label htmlFor="title" className="form-label">

@@ -5,6 +5,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import NoteState from "./Context/notes/noteState";
 import Alert from "./Components/Alert";
 import { useState } from "react";
+import Login from "./Components/Login";
+import SignUp from "./Components/SignUp";
 
 function App() {
 
@@ -16,7 +18,7 @@ function App() {
       message: message
     })
     setTimeout(() => {
-      setAlert(null)
+      setAlert(false)
     }, 2000);
   }
 
@@ -29,6 +31,8 @@ function App() {
           <Routes>
             <Route exact path="/" element={<Home fireAlert={fireAlert} />} />
             <Route exact path="/about" element={<About />} />
+            <Route exact path="/login" element={<Login/>} />
+            <Route exact path="/signUp" element={<SignUp/>} />
           </Routes>
         </BrowserRouter>
       </NoteState>

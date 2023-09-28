@@ -22,6 +22,7 @@ router.post(
 
     // If we found any errors, we return Bad Request with errors
     if (!errors.isEmpty()) {
+      success = false;
       return res.status(400).json({success, errors: errors.array() });
     }
 
@@ -29,6 +30,7 @@ router.post(
     try {
       let user = await User.findOne({ email: req.body.email });
       if (user) {
+        success = false
         return res
           .status(400)
           .json({success, error: "User with this email already exists" });
@@ -56,7 +58,7 @@ router.post(
       res.json({success, authToken})
 
     } catch (error) {
-        let success = false
+        success = false
         console.log(error.message);
         res.status(500).json({success, error: "Some Error occured"})
     }
@@ -73,6 +75,7 @@ router.post('/login', [
   let success = false;
   const errors = await validationResult(req);
   if(!errors.isEmpty()){
+    success=false;
     return res.status(400).json({success,errors: errors.array()})
   }
 
@@ -84,6 +87,7 @@ router.post('/login', [
 
   // returning error with message if user doesn't exist
   if(!user){
+    success = false
     return res.status(400).json({success,error: "Enter valid credentials"});
   }
 
@@ -92,6 +96,7 @@ router.post('/login', [
 
   // Returning error with message if Password was wrong
   if(!passwordConfirm){ 
+    success = false;
     return res.status(400).json({success,error: "Enter valid credentials"})
   }
 
@@ -106,7 +111,7 @@ router.post('/login', [
   res.status(200).json({success,authToken}) 
 
  } catch (error) {
-  let success = false;
+  success = false;
    console.log(error.message);
   res.status(500).json({success, error: "Some internal error occured"})
  }

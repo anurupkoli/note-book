@@ -19,6 +19,7 @@ router.post(
     const error = validationResult(req);
     // If errors found, returning with status code 400 and error message
     if (!error.isEmpty()) {
+      success = false;
       return res.status(400).json({success, error: error.array() });
     }
     // If validated, pushing data to database
@@ -33,6 +34,7 @@ router.post(
       });
       res.status(200).json({success, note });
     } catch (error) {
+      success = false;
       console.log(error);
       res.status(500).send("Internal server error");
     }
@@ -46,6 +48,7 @@ router.get("/getNotes", fetchUser, async (req, res) => {
   try {
     let userId = await Note.findOne({ user: req.user.id });
     if (!userId) {
+      success = false;
       return res.status(400).json({success, error: "No note found" });
     }
     // Fetching user notes if user was validated
@@ -53,6 +56,7 @@ router.get("/getNotes", fetchUser, async (req, res) => {
     let note = await Note.find({ user: req.user.id });
     return res.json({success,note});
   } catch (error) {
+    success = false;
     console.log(error);
     return res.status(500).json({success,error});
   }
@@ -64,9 +68,11 @@ router.put("/updateNote/:id", fetchUser, async (req, res) => {
   try {
     let note = await Note.findById(req.params.id);
     if (!note) {
+      success = false;
       return res.status(404).send("No note found");
     }
     if (note.user.toString() !== req.user.id) {
+      success = false
       return res.status(404).json({success, message: "Authentication revoked"});
     }
 
@@ -89,8 +95,9 @@ router.put("/updateNote/:id", fetchUser, async (req, res) => {
     success = true;
     res.status(200).json({success, updatedNote});
   } catch (error) {
+    success = false;
     console.log(error);
-    res.status(500).json(error);
+    res.status(500).json(success,error);
   }
 });
 
@@ -100,15 +107,18 @@ router.delete("/deleteNote/:id", fetchUser, async (req, res) => {
   try {
     let note = await Note.findById(req.params.id);
     if (!note) {
+      success = false;
       return res.status(404).json({success, message:"No note found"});
     }
     if (note.user.toString() !== req.user.id) {
+      success = false;
       return res.status(500).json({success, message: "Authentication Revoked"});
     }
     success = true
     const deletedNote = await Note.findByIdAndDelete(req.params.id);
     res.status(200).json({ success, deletedNote });
   } catch (error) {
+    success = false
     console.log(error);
     res.status(500).json({success, error});
   }
