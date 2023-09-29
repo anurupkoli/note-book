@@ -4,8 +4,11 @@ import noteContext from "../Context/notes/noteContext";
 
 export default function NoteItem(props) {
   let context = useContext(noteContext);
+  // Destructing required data from noteContext
   let {deleteNote, success} = context;
   const { note, fireModal, fireAlert} = props;
+  
+  // Firing alert when clicked on delete option
   const alert = ()=>{
     if(success === true){
       fireAlert('success', 'Note has been deleted :)')

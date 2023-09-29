@@ -6,8 +6,11 @@ export default function Login() {
     const [credentials, setCredentials] = useState({email: "", password: ""});
     let history = useNavigate();
 
+    // Method to Login user into his account if form is submited
     const handleSubmit = async (e)=>{
+      // prevents page from reloading
         e.preventDefault();
+        // using post request to validate user
         const response = await fetch('http://localhost:8000/api/auth/login', {
             method:"POST",
             headers: {
@@ -20,6 +23,7 @@ export default function Login() {
         })
         const json = await response.json();
         console.log(json)
+        // If validation was successful then redirecting to home page
         if(json.success){
             localStorage.setItem('token', json.authToken)
             console.log(localStorage.getItem('token'))
@@ -30,6 +34,7 @@ export default function Login() {
         }
     }
 
+    // Method to sense changes in input tag
     const handleChange = (e)=>{
         setCredentials({ ...credentials, [e.target.name]: e.target.value });
     }

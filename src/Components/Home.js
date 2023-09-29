@@ -4,12 +4,16 @@ import noteContext from "../Context/notes/noteContext";
 
 export default function Home(props) {
   let context = useContext(noteContext)
+  // Destructring required data from noteContext
   let {addNote, success} = context;
   const [note, setNote] = useState({title: "", description:"", tag: "General"});
 
+  // Method to add Note if clicked on submit button
   const handleClick = async (e)=>{
+    // prevents reloading of page
     e.preventDefault();
     await addNote(note.title, note.description, note.tag);
+    // checks for loading alert
     if(success===true){
       props.fireAlert('success', 'Note has been saved :)')
     }
@@ -18,6 +22,7 @@ export default function Home(props) {
     }
   }
 
+  // method to sense changes that occur in input tag
   const handleChange = (e)=>{
     setNote({...note, [e.target.name]: e.target.value })
   }
@@ -71,6 +76,8 @@ export default function Home(props) {
           </button>
         </form>
       </div>
+
+      {/* Prop drilling :) could have created another context for alert but that's fine for now */}
       <div className="container mt-5 ">
         <h2>Your Notes</h2>
         <Notes fireAlert={props.fireAlert} />

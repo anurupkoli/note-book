@@ -4,6 +4,7 @@ export default function SignUp() {
   const [credentials, setCredentials] = useState({name: "", email: "", password: "" });
   let history = useNavigate();
 
+  // Method to Create a New user if Credentials are correct
   const handleSubmit = async (e) => {
     e.preventDefault();
     const response = await fetch("http://localhost:8000/api/auth/createUser", {
@@ -19,6 +20,8 @@ export default function SignUp() {
     });
     const json = await response.json();
     console.log(json);
+    
+    // Pushing returned token to localstorage if signup was successful
     if (json.success) {
       localStorage.setItem("token", json.authToken);
       history("/");
@@ -33,6 +36,7 @@ export default function SignUp() {
     }
   };
 
+  // Method to sense changes in input  tag
   const handleChange = (e) => {
     setCredentials({ ...credentials, [e.target.name]: e.target.value });
   };

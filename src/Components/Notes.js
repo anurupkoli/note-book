@@ -5,22 +5,24 @@ import { useNavigate } from "react-router-dom";
 
 export default function Notes(props) {
   const context = useContext(noteContext);
+  // Destructring required data from noteContext
   let { notes, fetchNotes, editNote, success } = context;
-  console.log(notes)
   const [note, setNote] = useState({
     etitle: "",
     edescription: "",
     etag: "",
     eid: "",
   });
-
+  
+  // Method to sense changes that occur in input tag
   const handleChange = (e) => {
     setNote({ ...note, [e.target.name]: e.target.value });
   };
 
+  // Using useEffect hook to load fetchNotes data before component is loaded
   const navigate = useNavigate();
-
   useEffect(() => {
+    // If user has logged in with relevant token then notes are fetched else redirected to login page
     if(localStorage.getItem('token')){
       fetchNotes();
     }
@@ -29,7 +31,8 @@ export default function Notes(props) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
+ 
+  // Method to fire Edit Modal and is used in noteItem component
   const fireModal = (note) => {
     ref.current.click();
     setNote({
@@ -40,6 +43,7 @@ export default function Notes(props) {
     });
   };
 
+  // Method to fire editNote function when clicked on save changes button
   const noteEdit = async () => {
     refClose.current.click();
     await editNote(note.eid, note.etitle, note.edescription, note.etag);
@@ -51,7 +55,10 @@ export default function Notes(props) {
     }
   };
 
+  // Reference hook for edit modal to be fired
   const ref = useRef(null);
+
+  // Reference Hook for edit  modal to be closed
   const refClose = useRef(null);
 
   return (
@@ -63,7 +70,7 @@ export default function Notes(props) {
         data-bs-toggle="modal"
         data-bs-target="#exampleModal"
       >
-        Launch demo modal
+        Launch Edit Modal
       </button>
       <div
         className="modal fade "

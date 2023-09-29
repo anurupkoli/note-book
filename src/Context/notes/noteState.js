@@ -2,11 +2,13 @@ import NoteContext from "./noteContext";
 import { useState } from "react";
 
 const NoteState = (props)=>{
+    // Specified specific host i.e backend for this react app
     const host = 'http://localhost:8000'
     const iNotes = []
     const [notes, setNotes] = useState(iNotes);
     const [success, setsuccess] = useState(null);
 
+    //Method to fetch all notes of specific user who has  loging in using token
     const fetchNotes = async ()=>{
       const response = await fetch(`${host}/api/note/getNotes`, {
         method: "GET", 
@@ -16,13 +18,14 @@ const NoteState = (props)=>{
         }, 
       }) 
       const json = await response.json();
+      // If response has empty notes then setting empty array object to notes
       if(!json.note){
         setNotes(iNotes)
       }
       setNotes(json.note);
     }
 
-
+    // Method to add a note to specified user using token
     const addNote = async (title, description, tag)=>{
         const response = await fetch(`${host}/api/note/addNote`, {
           method: "POST", 
@@ -41,7 +44,7 @@ const NoteState = (props)=>{
         fetchNotes();
     }
 
-
+    // Method to deleted a note from specified user's account
     const deleteNote = async (id)=>{
       const response = await fetch(`${host}/api/note/deleteNote/${id}`, {
         method: "DELETE",
@@ -55,8 +58,9 @@ const NoteState = (props)=>{
       fetchNotes();
     }
 
-    const editNote = async (id, title, description, tag)=>{
 
+    //Method to edit a note if respective user  has logged in
+    const editNote = async (id, title, description, tag)=>{
       const response = await fetch(`${host}/api/note/updateNote/${id}`, {
         method: "PUT",
         headers: {

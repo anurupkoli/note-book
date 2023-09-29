@@ -2,8 +2,8 @@ import React from "react";
 import {NavLink, useNavigate} from "react-router-dom";
 
 export default function Navbar() {
-  // const location = useLocation();
   const navigate = useNavigate()
+  // method to logout user if he wants to logout
   const handleLogOut = ()=>{
     const confirm = window.confirm("Do you really want to Logout?")
     if(confirm){
@@ -47,6 +47,7 @@ export default function Navbar() {
                 </NavLink>
               </li>
             </ul>
+            {/* Added check so that user do not see login/signup buttons in his navigation bar if he is already loged in instead he will be shown logOut button */}
             {!localStorage.getItem('token')?<form className="d-flex" role="search">
               <NavLink to="/login" className="btn btn-outline-danger mx-1" type="submit">
                 Login

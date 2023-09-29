@@ -3,6 +3,7 @@ import React from "react";
 export default function Alert(props) {
   return (
     <>
+      {/* If props.alert is true then alert is shown else it is hidden */}
       <div style={{height: "50px", position: "sticky", top: "50px"}} >
         {props.alert && (
           <div

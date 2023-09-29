@@ -11,7 +11,8 @@ import SignUp from "./Components/SignUp";
 function App() {
 
   const [alert, setAlert] = useState({type: "", message:""});
-
+  
+  // Method to set alert type and relevant message and it lasts for 2 seconds
   const fireAlert = (type, message)=>{
     setAlert({
       type: type,
