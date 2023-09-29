@@ -1,8 +1,20 @@
 import React from "react";
-import {NavLink} from "react-router-dom";
+import {NavLink, useNavigate} from "react-router-dom";
 
 export default function Navbar() {
   // const location = useLocation();
+  const navigate = useNavigate()
+  const handleLogOut = ()=>{
+    const confirm = window.confirm("Do you really want to Logout?")
+    if(confirm){
+      localStorage.removeItem('token');
+    navigate("/login")
+    return;
+    }
+    else{
+      return;
+    }
+  }
   return (
     
     <>
@@ -35,14 +47,14 @@ export default function Navbar() {
                 </NavLink>
               </li>
             </ul>
-            <form className="d-flex" role="search">
+            {!localStorage.getItem('token')?<form className="d-flex" role="search">
               <NavLink to="/login" className="btn btn-outline-danger mx-1" type="submit">
                 Login
               </NavLink>
               <NavLink to="/SignUp" className="btn btn-outline-danger mx-1" type="submit">
                 SignUp
               </NavLink>
-            </form>
+            </form>: <button onClick={handleLogOut} className="btn btn-outline-danger mx-1">LogOut</button>}
           </div>
         </div>
       </nav>
