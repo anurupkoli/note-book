@@ -19,13 +19,11 @@ export default function SignUp() {
       }),
     });
     const json = await response.json();
-    console.log(json);
     
     // Pushing returned token to localstorage if signup was successful
     if (json.success) {
       localStorage.setItem("token", json.authToken);
       history("/");
-      console.log(localStorage.getItem('token'))
     } else {
       if(json.errors){
         alert(json.errors[json.errors.length-1].msg);
